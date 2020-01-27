@@ -3,18 +3,18 @@ class ApplicationController < ActionController::API
     #Punto 1
     def create_array
         length_array = params[:num_elements].to_i
-        if length_array >= 10 && length_array <= 30
-            @elements = Array.new(length_array) { rand(0...30) }.uniq!
+        if length_array >= 10 && length_array <= 30 # Validar que la cantidad solicitada esté entre 10 y 30
+            @elements = Array.new(length_array) { rand(0...30) }.uniq! # Uso el uniq! para eliminar los repetidos
             if @elements.length < length_array
-                while @elements.length < length_array
-                    rand_number = rand(0...30)
-                    if !@elements.include? rand_number
-                        @elements.push(rand_number)
+                while @elements.length < length_array # Mientras la cantidad de números no sea el solicitado
+                    rand_number = rand(0...30) # Siga generando números aleatorios
+                    if !@elements.include? rand_number # Y verifique que ese número no esté ya en el array
+                        @elements.push(rand_number) # Si no está, agreguelo
                     end
                 end
             end
-            Element.create! :elements=>@elements
-            @response = Element.all.order(id: :desc)
+            Element.create! :elements=>@elements # Guardo el arreglo en un campo en la base de datos
+            @response = Element.all.order(id: :desc) # Preparo una respuesta que trae todos los array ordenados, esto con el fin de que el usuario tenga presnete el id que requiere para el punto 2
             @status= 202
         else
             @response = "El número de elementos debe ser mínimo 10 y máximo 30"
@@ -26,8 +26,8 @@ class ApplicationController < ActionController::API
 
     #Punto 2
     def return_array
-        array = Element.find(params[:element]).elements.sort
-        result = array.slice_when { |prev, curr| curr != prev.next }.to_a
+        array = Element.find(params[:element]).elements.sort # Me traigo el array solicitado
+        result = array.slice_when { |prev, curr| curr != prev.next }.to_a # Dentro del array principal genero "mini arrays", estos son con las secuencias de números que pueda encontrar
         range_length = 0
         range_selected = []
         result.each do |r|
