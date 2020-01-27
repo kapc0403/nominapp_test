@@ -1,3 +1,3 @@
 class Element < ApplicationRecord
-    serialize :elements
+    #serialize :elements
 end
